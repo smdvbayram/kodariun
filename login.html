@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş - Kodariun Portalı</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-main: #00796B;
+            --primary-dark: #083331;
+            --accent: #00A99D;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+            font-family: 'Nunito', sans-serif;
+            background: var(--primary-dark);
+        }
+        .login-container {
+            background: #fff;
+            padding: 30px 50px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-container .logo-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+        }
+        .login-container h2 {
+            margin-bottom: 25px;
+            color: #555;
+            font-weight: 600;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+        }
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary-main);
+            box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.2);
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background-image: linear-gradient(45deg, var(--primary-main), var(--accent));
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.4);
+        }
+        #message {
+            margin-top: 15px;
+            font-weight: 600;
+            display: none; /* Başlanğıcda gizli */
+        }
+        .message-success {
+            color: #27ae60;
+        }
+        .message-error {
+            color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="logo-text">KODARIUN</h1>
+        <h2>Portala Daxil Olun</h2>
+        <form id="loginForm" class="login-form">
+            <input type="email" id="email" placeholder="E-poçt" required value="admin@kodariun.com">
+            <input type="password" id="password" placeholder="Şifrə" required value="admin123">
+            <button type="submit" class="btn-submit">Daxil Ol</button>
+        </form>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // --- BACKEND İLƏ ƏLAQƏ ÜÇÜN JAVASCRIPT ---
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            // Formanın standart göndərilməsinin qarşısını alırıq
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+
+            // Mesajı təmizləyirik
+            messageDiv.textContent = '';
+            messageDiv.style.display = 'none';
+
+            try {
+                // Serverə (localhost:3000/api/login) POST sorğusu göndəririk
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email, password: password })
+                });
+
+                // Serverdən gələn cavabı JSON formatına çeviririk
+                const data = await response.json();
+
+                // Əgər cavab uğurlu deyilsə (status 200-299 arasında deyilsə)
+                if (!response.ok) {
+                    throw new Error(data.message || 'Bilinməyən xəta baş verdi.');
+                }
+
+                // Giriş uğurludursa, istifadəçi məlumatlarını və token-i brauzer yaddaşında saxlayırıq
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+
+                // Uğurlu mesajı göstəririk
+                messageDiv.textContent = data.message;
+                messageDiv.className = 'message-success';
+                messageDiv.style.display = 'block';
+                
+                // İstifadəçini roluna görə müvafiq səhifəyə yönləndiririk
+                setTimeout(() => {
+                    switch(data.user.role) {
+                        case 'admin':
+                            window.location.href = 'admin.html';
+                            break;
+                        case 'teacher':
+                            window.location.href = 'teacher.html';
+                            break;
+                        case 'student':
+                            window.location.href = 'student.html';
+                            break;
+                        default:
+                            // Heç bir rol təyin edilməyibsə, ana səhifəyə yönləndir
+                            window.location.href = 'index.html';
+                    }
+                }, 1000); // 1 saniyə sonra yönləndir
+
+            } catch (error) {
+                // Xəta baş verərsə
+                messageDiv.textContent = error.message;
+                messageDiv.className = 'message-error';
+                messageDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müəllim Paneli - Kodariun</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- BÜTÜN CSS KODLARI BURADADIR --- */
+        :root {
+            --primary-main: #008072;
+            --primary-dark: #083331;
+            --accent: #00a99d;
+            --text-light: #f0f2f5;
+            --text-dark: #333;
+            --white: #ffffff;
+            --section-bg: #f8f9fa;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; color: var(--text-dark); background-color: var(--section-bg); display: flex; }
+        .sidebar { width: 260px; background: var(--primary-dark); color: var(--text-light); display: flex; flex-direction: column; height: 100vh; position: fixed; top: 0; left: 0; transition: width 0.3s ease; }
+        .sidebar-header { padding: 20px; text-align: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-header h3 { margin: 0; font-size: 24px; letter-spacing: 1px; color: var(--white); font-weight: 800; }
+        .sidebar-menu { list-style: none; padding: 20px 0; margin: 0; flex-grow: 1; }
+        .sidebar-menu li a { display: flex; align-items: center; padding: 15px 25px; color: var(--text-light); text-decoration: none; transition: background 0.3s ease, padding-left 0.3s ease; font-size: 16px; font-weight: 600; }
+        .sidebar-menu li a .icon { margin-right: 15px; width: 20px; text-align: center; font-size: 18px; }
+        .sidebar-menu li.active a, .sidebar-menu li a:hover { background: var(--primary-main); color: var(--white); padding-left: 30px; border-right: 4px solid var(--accent); }
+        .sidebar-footer { padding: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-footer a { color: #bdc3c7; text-decoration: none; font-size: 14px; transition: color 0.3s ease; }
+        .sidebar-footer a:hover { color: var(--white); }
+        .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 20px; transition: margin-left 0.3s ease, width 0.3s ease; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 25px; }
+        .main-header h2 { margin: 0; color: var(--primary-dark); font-size: 24px; display: flex; align-items: center; font-weight: 700; }
+        .main-header h2 .icon { margin-right: 12px; }
+        .user-info { display: flex; align-items: center; font-weight: 600; }
+        .user-info .fa-user-circle { font-size: 28px; margin-left: 15px; color: #7f8c8d; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .content-section { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .content-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .content-section-header h3 { margin: 0; color: var(--primary-dark); font-weight: 700; }
+        .primary-button { background-image: linear-gradient(45deg, var(--primary-main), var(--accent)); color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 15px; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; }
+        .primary-button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 121, 107, 0.4); }
+        .primary-button .icon { margin-right: 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        table th, table td { padding: 15px; border-bottom: 1px solid var(--section-bg); text-align: left; vertical-align: middle; }
+        table th { background-color: #f8f9fa; font-weight: 700; color: #7f8c8d; font-size: 14px; text-transform: uppercase; }
+        table tbody tr:hover { background-color: #f8f9fa; }
+        .action-buttons button { border: none; background: none; cursor: pointer; font-size: 18px; margin: 0 5px; transition: color 0.2s ease; }
+        .action-buttons .edit-btn { color: #f39c12; }
+        .action-buttons .edit-btn:hover { color: #d68910; }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 30px; border-radius: 12px; width: 80%; max-width: 500px; position: relative; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover, .close-btn:focus { color: black; }
+        .modal-content h3 { margin-bottom: 20px; }
+        .modal-content .form-group { margin-bottom: 15px; }
+        .modal-content .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .modal-content .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header"><h3>Müəllim Paneli</h3></div>
+        <ul class="sidebar-menu">
+            <li class="active" data-page="my-students"><a href="#"><i class="fas fa-users icon"></i> <span>Mənim Şagirdlərim</span></a></li>
+            <li data-page="lessons"><a href="#"><i class="fas fa-book-open icon"></i> <span>Dərs Materialları</span></a></li>
+            <li data-page="grades"><a href="#"><i class="fas fa-marker icon"></i> <span>Qiymətləndirmə</span></a></li>
+        </ul>
+        <div class="sidebar-footer"><a href="login.html"><i class="fas fa-sign-out-alt icon"></i> Çıxış</a></div>
+    </aside>
+
+    <main class="main-content">
+        <header class="main-header">
+            <h2 id="page-title"><i class="fas fa-users icon"></i> Mənim Şagirdlərim</h2>
+            <div class="user-info">
+                <span id="user-name">Xoş gəldin, Müəllim</span><i class="fas fa-user-circle"></i>
+            </div>
+        </header>
+
+        <div class="main-inner-content">
+            <div id="my-students" class="page-content active">
+                <div class="content-section">
+                    <h3>Qruplarım və Şagirdlərim</h3>
+                    <table>
+                        <!-- DÜZELTME: Tablo başlığına yeni sütun eklendi -->
+                        <thead><tr><th>Ad Soyad</th><th>Qrup</th><th>Valideyn Əlaqə</th><th>Əməliyyatlar</th></tr></thead>
+                        <tbody id="students-table-body">
+                            <!-- Şagirdlər bura dinamik olaraq yüklənəcək -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="lessons" class="page-content">
+                <div class="content-section">
+                    <h3>Mövcud Dərs Materialları</h3>
+                    <table>
+                        <thead><tr><th>Dərs Adı</th><th>Modul</th><th>Yüklə (PDF)</th></tr></thead>
+                        <tbody id="lessons-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="grades" class="page-content">
+                <div class="content-section">
+                    <h3>Şagird Qiymətləndirməsi (Ümumi Baxış)</h3>
+                    <table>
+                        <thead><tr><th>Şagird</th><th>Tapşırıq</th><th>Qiymət</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="gradeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3 id="gradeModalTitle">Qiymət Yaz</h3>
+            <form id="gradeForm">
+                <input type="hidden" id="studentIdForGrade">
+                <div class="form-group"><label for="assignmentName">Tapşırığın Adı</label><input type="text" id="assignmentName" required></div>
+                <div class="form-group"><label for="gradeValue">Qiymət (0-100)</label><input type="number" id="gradeValue" min="0" max="100" required></div>
+                <button type="submit" class="primary-button">Təsdiq Et</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.sidebar-menu li');
+            const pageContents = document.querySelectorAll('.page-content');
+            const pageTitle = document.getElementById('page-title');
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+
+            if (currentUser) {
+                document.getElementById('user-name').textContent = `Xoş gəldin, ${currentUser.name}`;
+            } else {
+                document.getElementById('user-name').textContent = `Xoş gəldin, Qonaq`;
+            }
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    const pageId = this.getAttribute('data-page');
+                    pageContents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(pageId).classList.add('active');
+                    const link = this.querySelector('a');
+                    pageTitle.innerHTML = `${link.querySelector('.icon').outerHTML} ${link.querySelector('span').innerText}`;
+                });
+            });
+
+            async function loadLessons() {
+                const lessonsTableBody = document.getElementById('lessons-table-body');
+                try {
+                    const response = await fetch('http://localhost:3000/api/lessons');
+                    const lessons = await response.json();
+                    lessonsTableBody.innerHTML = '';
+                    lessons.forEach(lesson => {
+                        const row = `<tr><td>${lesson.title}</td><td>${lesson.module}</td><td><a href="http://localhost:3000/${lesson.file_path.replace(/\\/g, '/')}" target="_blank" class="primary-button"><i class="fas fa-download icon"></i> Yüklə</a></td></tr>`;
+                        lessonsTableBody.innerHTML += row;
+                    });
+                } catch (error) {
+                    lessonsTableBody.innerHTML = '<tr><td colspan="3">Dərslər yüklənə bilmədi.</td></tr>';
+                }
+            }
+
+            // DÜZELTME: Öğrenci listesi veli bilgisiyle birlikte gösterilecek
+            async function loadMyStudents() {
+                if (!currentUser) return;
+                const studentsTableBody = document.getElementById('students-table-body');
+                try {
+                    const response = await fetch(`http://localhost:3000/api/teachers/${currentUser.id}/students`);
+                    const students = await response.json();
+                    studentsTableBody.innerHTML = '';
+                    if (students.length === 0) {
+                        studentsTableBody.innerHTML = '<tr><td colspan="4">Sizə təhkim edilmiş şagird tapılmadı.</td></tr>';
+                        return;
+                    }
+                    students.forEach(student => {
+                        const row = `<tr>
+                            <td>${student.name}</td>
+                            <td>Robotika-101</td>
+                            <td>${student.parent_contact || 'Məlumat yoxdur'}</td>
+                            <td class="action-buttons">
+                                <button class="edit-btn grade-btn" data-student-id="${student.id}" data-student-name="${student.name}" title="Qiymətləndir"><i class="fas fa-marker"></i></button>
+                            </td>
+                        </tr>`;
+                        studentsTableBody.innerHTML += row;
+                    });
+                } catch (error) {
+                    console.error("Şagirdlər yüklənərkən xəta:", error);
+                    studentsTableBody.innerHTML = '<tr><td colspan="4">Şagirdlər yüklənə bilmədi.</td></tr>';
+                }
+            }
+
+            const gradeModal = document.getElementById('gradeModal');
+            const gradeModalCloseBtn = gradeModal.querySelector('.close-btn');
+            const gradeForm = document.getElementById('gradeForm');
+            const gradeModalTitle = document.getElementById('gradeModalTitle');
+            const studentIdInput = document.getElementById('studentIdForGrade');
+
+            document.getElementById('students-table-body').addEventListener('click', function(e) {
+                const gradeBtn = e.target.closest('.grade-btn');
+                if (gradeBtn) {
+                    studentIdInput.value = gradeBtn.dataset.studentId;
+                    gradeModalTitle.textContent = `${gradeBtn.dataset.studentName} üçün qiymət yaz`;
+                    gradeModal.style.display = 'block';
+                }
+            });
+
+            gradeModalCloseBtn.onclick = () => { gradeModal.style.display = 'none'; gradeForm.reset(); };
+            window.onclick = (event) => { if (event.target == gradeModal) gradeModal.style.display = 'none'; };
+
+            gradeForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                if (!currentUser) {
+                    alert("Qiymət yazmaq üçün giriş etməlisiniz.");
+                    return;
+                }
+                const gradeData = {
+                    student_id: studentIdInput.value,
+                    assignment_name: document.getElementById('assignmentName').value,
+                    grade: document.getElementById('gradeValue').value,
+                    graded_by_teacher_id: currentUser.id
+                };
+                try {
+                    const response = await fetch('http://localhost:3000/api/grades/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(gradeData)
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+                    alert(result.message);
+                    gradeModal.style.display = 'none';
+                    this.reset();
+                } catch (error) { alert('Xəta: ' + error.message); }
+            });
+
+            loadMyStudents();
+            loadLessons();
+        });
+    </script>
+</body>
+</html>

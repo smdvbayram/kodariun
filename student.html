@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şagird Paneli - Kodariun</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- BÜTÜN CSS KODLARI BURADADIR --- */
+        :root {
+            --primary-main: #008072;
+            --primary-dark: #083331;
+            --accent: #00a99d;
+            --text-light: #f0f2f5;
+            --text-dark: #333;
+            --white: #ffffff;
+            --section-bg: #f8f9fa;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; color: var(--text-dark); background-color: var(--section-bg); display: flex; }
+        .sidebar { width: 260px; background: var(--primary-dark); color: var(--text-light); display: flex; flex-direction: column; height: 100vh; position: fixed; top: 0; left: 0; transition: width 0.3s ease; }
+        .sidebar-header { padding: 20px; text-align: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-header h3 { margin: 0; font-size: 24px; letter-spacing: 1px; color: var(--white); font-weight: 800; }
+        .sidebar-menu { list-style: none; padding: 20px 0; margin: 0; flex-grow: 1; }
+        .sidebar-menu li a { display: flex; align-items: center; padding: 15px 25px; color: var(--text-light); text-decoration: none; transition: background 0.3s ease, padding-left 0.3s ease; font-size: 16px; font-weight: 600; }
+        .sidebar-menu li a .icon { margin-right: 15px; width: 20px; text-align: center; font-size: 18px; }
+        .sidebar-menu li.active a, .sidebar-menu li a:hover { background: var(--primary-main); color: var(--white); padding-left: 30px; border-right: 4px solid var(--accent); }
+        .sidebar-footer { padding: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-footer a { color: #bdc3c7; text-decoration: none; font-size: 14px; transition: color 0.3s ease; }
+        .sidebar-footer a:hover { color: var(--white); }
+        .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 20px; transition: margin-left 0.3s ease, width 0.3s ease; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 25px; }
+        .main-header h2 { margin: 0; color: var(--primary-dark); font-size: 24px; display: flex; align-items: center; font-weight: 700; }
+        .main-header h2 .icon { margin-right: 12px; }
+        .user-info { display: flex; align-items: center; font-weight: 600; }
+        .user-info .fa-user-circle { font-size: 28px; margin-left: 15px; color: #7f8c8d; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .content-section { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .content-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .content-section-header h3 { margin: 0; color: var(--primary-dark); font-weight: 700; }
+        .primary-button { background-image: linear-gradient(45deg, var(--primary-main), var(--accent)); color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 15px; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; }
+        .primary-button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 121, 107, 0.4); }
+        .primary-button .icon { margin-right: 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        table th, table td { padding: 15px; border-bottom: 1px solid var(--section-bg); text-align: left; vertical-align: middle; }
+        table th { background-color: #f8f9fa; font-weight: 700; color: #7f8c8d; font-size: 14px; text-transform: uppercase; }
+        table tbody tr:hover { background-color: #f8f9fa; }
+        .profile-info { line-height: 2.2; }
+        .profile-info strong { color: var(--primary-dark); margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header"><h3>Şagird Paneli</h3></div>
+        <ul class="sidebar-menu">
+            <li class="active" data-page="my-lessons"><a href="#"><i class="fas fa-book-open icon"></i> <span>Dərslərim</span></a></li>
+            <li data-page="my-grades"><a href="#"><i class="fas fa-graduation-cap icon"></i> <span>Qiymətlərim</span></a></li>
+            <li data-page="my-profile"><a href="#"><i class="fas fa-user icon"></i> <span>Profilim</span></a></li>
+        </ul>
+        <div class="sidebar-footer"><a href="login.html"><i class="fas fa-sign-out-alt icon"></i> Çıxış</a></div>
+    </aside>
+
+    <main class="main-content">
+        <header class="main-header">
+            <h2 id="page-title"><i class="fas fa-book-open icon"></i> Dərslərim</h2>
+            <div class="user-info">
+                <span id="user-name">Xoş gəldin, Şagird</span><i class="fas fa-user-circle"></i>
+            </div>
+        </header>
+
+        <div class="main-inner-content">
+            <div id="my-lessons" class="page-content active">
+                <div class="content-section">
+                    <h3>Dərs Materialları</h3>
+                    <table>
+                        <thead><tr><th>Dərs Adı</th><th>Modul</th><th>Yüklə (PDF)</th></tr></thead>
+                        <tbody id="lessons-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="my-grades" class="page-content">
+                <div class="content-section">
+                     <h3>Qiymət Cədvəli</h3>
+                    <table>
+                        <thead><tr><th>Tapşırıq</th><th>Tarix</th><th>Qiymət</th></tr></thead>
+                        <tbody id="grades-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="my-profile" class="page-content">
+                <div class="content-section">
+                     <h3>Profil Məlumatları</h3>
+                     <div class="profile-info">
+                        <p><strong>Tam Ad:</strong> <span id="profile-name"></span></p>
+                        <p><strong>E-poçt:</strong> <span id="profile-email"></span></p>
+                        <p><strong>Valideyn:</strong> <span id="profile-parent-name"></span></p>
+                        <p><strong>Valideyn Əlaqə:</strong> <span id="profile-parent-contact"></span></p>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.sidebar-menu li');
+            const pageContents = document.querySelectorAll('.page-content');
+            const pageTitle = document.getElementById('page-title');
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+
+            if (currentUser) {
+                document.getElementById('user-name').textContent = `Xoş gəldin, ${currentUser.name}`;
+                if (currentUser.role !== 'student') {
+                    // window.location.href = 'login.html';
+                }
+            } else {
+                document.getElementById('user-name').textContent = `Xoş gəldin, Qonaq`;
+                // window.location.href = 'login.html';
+            }
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    const pageId = this.getAttribute('data-page');
+                    pageContents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(pageId).classList.add('active');
+                    const link = this.querySelector('a');
+                    pageTitle.innerHTML = `${link.querySelector('.icon').outerHTML} ${link.querySelector('span').innerText}`;
+                    
+                    if(pageId === 'my-grades') loadMyGrades();
+                    if(pageId === 'my-profile') loadMyProfile();
+                });
+            });
+
+            async function loadLessons() {
+                const lessonsTableBody = document.getElementById('lessons-table-body');
+                try {
+                    const response = await fetch('http://localhost:3000/api/lessons');
+                    const lessons = await response.json();
+                    lessonsTableBody.innerHTML = '';
+                    if (lessons.length === 0) {
+                        lessonsTableBody.innerHTML = '<tr><td colspan="3">Heç bir dərs materialı tapılmadı.</td></tr>';
+                        return;
+                    }
+                    lessons.forEach(lesson => {
+                        const row = `<tr><td>${lesson.title}</td><td>${lesson.module}</td><td><a href="http://localhost:3000/${lesson.file_path.replace(/\\/g, '/')}" target="_blank" class="primary-button"><i class="fas fa-download icon"></i> Yüklə</a></td></tr>`;
+                        lessonsTableBody.innerHTML += row;
+                    });
+                } catch (error) {
+                    lessonsTableBody.innerHTML = '<tr><td colspan="3">Dərslər yüklənə bilmədi.</td></tr>';
+                }
+            }
+
+            async function loadMyGrades() {
+                if (!currentUser) return;
+                const gradesTableBody = document.getElementById('grades-table-body');
+                try {
+                    const response = await fetch(`http://localhost:3000/api/grades/student/${currentUser.id}`);
+                    const grades = await response.json();
+                    gradesTableBody.innerHTML = '';
+                    if (grades.length === 0) {
+                        gradesTableBody.innerHTML = '<tr><td colspan="3">Hələ heç bir qiymətiniz yoxdur.</td></tr>';
+                        return;
+                    }
+                    grades.forEach(grade => {
+                        const row = `<tr><td>${grade.assignment_name}</td><td>${new Date(grade.date).toLocaleDateString('az-AZ')}</td><td>${grade.grade}</td></tr>`;
+                        gradesTableBody.innerHTML += row;
+                    });
+                } catch (error) {
+                    gradesTableBody.innerHTML = '<tr><td colspan="3">Qiymətlər yüklənə bilmədi.</td></tr>';
+                }
+            }
+
+            async function loadMyProfile() {
+                if (!currentUser) return;
+                try {
+                    const response = await fetch(`http://localhost:3000/api/students/${currentUser.id}/details`);
+                    const profile = await response.json();
+                    if(response.ok) {
+                        document.getElementById('profile-name').textContent = profile.name || 'Məlumat yoxdur';
+                        document.getElementById('profile-email').textContent = profile.email || 'Məlumat yoxdur';
+                        document.getElementById('profile-parent-name').textContent = profile.parent_name || 'Məlumat yoxdur';
+                        document.getElementById('profile-parent-contact').textContent = profile.parent_contact || 'Məlumat yoxdur';
+                    }
+                } catch (error) {
+                    console.error("Profil məlumatları yüklənə bilmədi:", error);
+                }
+            }
+            
+            loadLessons();
+        });
+    </script>
+</body>
+</html>

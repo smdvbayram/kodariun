@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Kodariun</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-main: #008072;
+            --primary-dark: #083331;
+            --accent: #00a99d;
+            --text-light: #f0f2f5;
+            --text-dark: #333;
+            --white: #ffffff;
+            --section-bg: #f8f9fa;
+            --error-bg: #e74c3c;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; color: var(--text-dark); background-color: var(--section-bg); display: flex; }
+        .sidebar { width: 260px; background: var(--primary-dark); color: var(--text-light); display: flex; flex-direction: column; height: 100vh; position: fixed; top: 0; left: 0; transition: width 0.3s ease; z-index: 100; }
+        .sidebar-header { padding: 20px; text-align: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-header h3 { margin: 0; font-size: 24px; letter-spacing: 1px; color: var(--white); font-weight: 800; }
+        .sidebar-menu { list-style: none; padding: 20px 0; margin: 0; flex-grow: 1; }
+        .sidebar-menu li a { display: flex; align-items: center; padding: 15px 25px; color: var(--text-light); text-decoration: none; transition: background 0.3s ease, padding-left 0.3s ease; font-size: 16px; font-weight: 600; }
+        .sidebar-menu li a .icon { margin-right: 15px; width: 20px; text-align: center; font-size: 18px; }
+        .sidebar-menu li.active a, .sidebar-menu li a:hover { background: var(--primary-main); color: var(--white); padding-left: 30px; border-right: 4px solid var(--accent); }
+        .sidebar-footer { padding: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar-footer a { color: #bdc3c7; text-decoration: none; font-size: 14px; transition: color 0.3s ease; }
+        .sidebar-footer a:hover { color: var(--white); }
+        .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 20px; transition: margin-left 0.3s ease, width 0.3s ease; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 25px; }
+        .main-header h2 { margin: 0; color: var(--primary-dark); font-size: 24px; display: flex; align-items: center; font-weight: 700; }
+        .main-header h2 .icon { margin-right: 12px; }
+        .user-info { display: flex; align-items: center; font-weight: 600; }
+        .user-info .fa-user-circle { font-size: 28px; margin-left: 15px; color: #7f8c8d; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .content-section { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .content-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .content-section-header h3 { margin: 0; color: var(--primary-dark); font-weight: 700; }
+        .primary-button { background-image: linear-gradient(45deg, var(--primary-main), var(--accent)); color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 15px; transition: all 0.3s ease; }
+        .primary-button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 121, 107, 0.4); }
+        .primary-button .icon { margin-right: 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        table th, table td { padding: 15px; border-bottom: 1px solid var(--section-bg); text-align: left; vertical-align: middle; }
+        table th { background-color: #f8f9fa; font-weight: 700; color: #7f8c8d; font-size: 14px; text-transform: uppercase; }
+        table tbody tr:hover { background-color: #f8f9fa; }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 30px; border-radius: 12px; width: 80%; max-width: 500px; position: relative; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover, .close-btn:focus { color: black; }
+        .modal-content h3 { margin-bottom: 20px; }
+        .modal-content .form-group { margin-bottom: 15px; }
+        .modal-content .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .modal-content .form-group input, .modal-content .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 1rem; }
+        .parent-info { display: none; }
+        .delete-btn { background: var(--error-bg, #e74c3c); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .confirm-modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header"><h3>KODARIUN</h3></div>
+        <ul class="sidebar-menu">
+            <li class="active" data-page="dashboard"><a href="#"><i class="fas fa-tachometer-alt icon"></i> <span>İdarə Paneli</span></a></li>
+            <li data-page="lessons"><a href="#"><i class="fas fa-book-open icon"></i> <span>Dərslər</span></a></li>
+            <li data-page="teachers"><a href="#"><i class="fas fa-chalkboard-teacher icon"></i> <span>Müəllimlər</span></a></li>
+            <li data-page="students"><a href="#"><i class="fas fa-user-graduate icon"></i> <span>Şagirdlər</span></a></li>
+            <li data-page="courses"><a href="#"><i class="fas fa-school icon"></i> <span>Əməkdaş Kurslar</span></a></li>
+        </ul>
+        <div class="sidebar-footer"><a href="login.html"><i class="fas fa-sign-out-alt icon"></i> Çıxış</a></div>
+    </aside>
+
+    <main class="main-content">
+        <header class="main-header">
+            <h2 id="page-title"><i class="fas fa-tachometer-alt icon"></i> İdarə Paneli</h2>
+            <div class="user-info">
+                <span id="user-name">Xoş gəldin, Admin</span><i class="fas fa-user-circle"></i>
+            </div>
+        </header>
+
+        <div class="main-inner-content">
+            <div id="dashboard" class="page-content active">
+                <!-- Dashboard content... -->
+            </div>
+            <div id="lessons" class="page-content">
+                <div class="content-section">
+                    <div class="content-section-header"><h3>Dərs Materialları</h3><button id="addLessonBtn" class="primary-button"><i class="fas fa-plus icon"></i> Yeni Dərs Yüklə</button></div>
+                    <table id="lessonsTable">
+                        <thead><tr><th>Dərs Adı</th><th>Modul</th><th>Əməliyyatlar</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="teachers" class="page-content">
+                <div class="content-section">
+                     <div class="content-section-header"><h3>Müəllimlərin Siyahısı</h3><button class="primary-button open-modal-btn" data-role="teacher"><i class="fas fa-user-plus icon"></i> Yeni Müəllim Əlavə Et</button></div>
+                    <table id="teachersTable">
+                        <thead><tr><th>Ad Soyad</th><th>E-poçt</th><th>Əməliyyatlar</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="students" class="page-content">
+                 <div class="content-section">
+                     <div class="content-section-header"><h3>Şagirdlərin Siyahısı</h3><button class="primary-button open-modal-btn" data-role="student"><i class="fas fa-user-plus icon"></i> Yeni Şagird Əlavə Et</button></div>
+                    <table id="studentsTable">
+                        <thead><tr><th>Ad Soyad</th><th>Kurs</th><th>Müəllim</th><th>Əməliyyatlar</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="courses" class="page-content">
+                 <div class="content-section">
+                     <div class="content-section-header"><h3>Əməkdaşlıq Edilən Kurslar</h3><button id="addCourseBtn" class="primary-button"><i class="fas fa-plus icon"></i> Yeni Kurs Əlavə Et</button></div>
+                    <table id="coursesTable">
+                        <thead><tr><th>Kursun Adı</th><th>Şagird Sayı</th><th>Əməliyyatlar</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="addLessonModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span><h3>Yeni Dərs Materialı Yüklə</h3>
+            <form id="addLessonForm">
+                <div class="form-group"><label for="lessonTitle">Dərsin Başlığı</label><input type="text" id="lessonTitle" required></div>
+                <div class="form-group"><label for="lessonModule">Modul</label><input type="text" id="lessonModule" required></div>
+                <div class="form-group"><label for="lessonPdf">PDF Faylı</label><input type="file" id="lessonPdf" accept=".pdf" required></div>
+                <button type="submit" class="primary-button">Yüklə</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addCourseModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span><h3>Yeni Kurs Əlavə Et</h3>
+            <form id="addCourseForm">
+                <div class="form-group"><label for="courseName">Kursun Adı</label><input type="text" id="courseName" required></div>
+                <div class="form-group"><label for="courseDescription">Açıqlama</label><input type="text" id="courseDescription"></div>
+                <button type="submit" class="primary-button">Əlavə Et</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span><h3 id="modalTitle">Yeni İstifadəçi Əlavə Et</h3>
+            <form id="addUserForm">
+                <input type="hidden" id="userRole">
+                <div class="form-group"><label for="userName">Ad, Soyad</label><input type="text" id="userName" required></div>
+                <div class="form-group"><label for="userEmail">E-poçt</label><input type="email" id="userEmail" required></div>
+                <div class="form-group"><label for="userPassword">Şifrə</label><input type="password" id="userPassword" required></div>
+                <div id="studentFields" class="parent-info">
+                    <div class="form-group"><label for="courseSelect">Kursu Seçin</label><select id="courseSelect" required></select></div>
+                    <div class="form-group"><label for="teacherSelect">Müəllimi Seçin</label><select id="teacherSelect" required></select></div>
+                    <div class="form-group"><label for="parentName">Valideynin Adı</label><input type="text" id="parentName"></div>
+                    <div class="form-group"><label for="parentContact">Valideynin Əlaqə Nömrəsi</label><input type="text" id="parentContact"></div>
+                </div>
+                <button type="submit" class="primary-button">Əlavə Et</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="confirmDeleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Silməyi Təsdiq Edin</h3>
+            <p id="confirmMessage">Bu elementi silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.</p>
+            <div class="confirm-modal-buttons">
+                <button id="cancelDeleteBtn" class="primary-button" style="background: #7f8c8d;">Ləğv Et</button>
+                <button id="confirmDeleteBtn" class="delete-btn">Bəli, Sil</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.sidebar-menu li');
+            const pageContents = document.querySelectorAll('.page-content');
+            const pageTitle = document.getElementById('page-title');
+
+            async function fetchData(url) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        const errorResult = await response.json().catch(() => ({ message: "Serverdən etibarlı cavab alınmadı." }));
+                        throw new Error(errorResult.message);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error("Veri alınamadı:", url, error);
+                    alert(`Serverə qoşularkən xəta baş verdi. Zəhmət olmasa, serverin (server.js) işlədiyindən əmin olun. Xəta: ${error.message}`);
+                    return [];
+                }
+            }
+
+            async function loadLessons() {
+                const lessons = await fetchData('http://localhost:3000/api/lessons');
+                const tableBody = document.querySelector('#lessonsTable tbody');
+                tableBody.innerHTML = '';
+                lessons.forEach(lesson => {
+                    const row = `<tr>
+                        <td>${lesson.title}</td>
+                        <td>${lesson.module}</td>
+                        <td><button class="delete-btn" data-id="${lesson.id}" data-type="lesson"><i class="fas fa-trash"></i></button></td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            }
+
+            async function loadTeachers() {
+                const teachers = await fetchData('http://localhost:3000/api/users/role/teacher');
+                const tableBody = document.querySelector('#teachersTable tbody');
+                tableBody.innerHTML = '';
+                teachers.forEach(teacher => {
+                    const row = `<tr>
+                        <td>${teacher.name}</td>
+                        <td>${teacher.email}</td>
+                        <td><button class="delete-btn" data-id="${teacher.id}" data-type="user"><i class="fas fa-trash"></i></button></td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            }
+
+            async function loadStudents() {
+                const students = await fetchData('http://localhost:3000/api/students/with-details');
+                const tableBody = document.querySelector('#studentsTable tbody');
+                tableBody.innerHTML = '';
+                students.forEach(student => {
+                    const row = `<tr>
+                        <td>${student.name}</td>
+                        <td>${student.course_name || 'Təyin edilməyib'}</td>
+                        <td>${student.teacher_name || 'Təyin edilməyib'}</td>
+                        <td><button class="delete-btn" data-id="${student.id}" data-type="user"><i class="fas fa-trash"></i></button></td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            }
+
+            async function loadCourses() {
+                const courses = await fetchData('http://localhost:3000/api/courses');
+                const tableBody = document.querySelector('#coursesTable tbody');
+                tableBody.innerHTML = '';
+                courses.forEach(course => {
+                    const row = `<tr>
+                        <td>${course.name}</td>
+                        <td>${course.student_count}</td>
+                        <td><button class="delete-btn" data-id="${course.id}" data-type="course"><i class="fas fa-trash"></i></button></td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            }
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    const pageId = this.getAttribute('data-page');
+                    pageContents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(pageId).classList.add('active');
+                    const link = this.querySelector('a');
+                    pageTitle.innerHTML = `${link.querySelector('.icon').outerHTML} ${link.querySelector('span').innerText}`;
+                    
+                    if (pageId === 'lessons') loadLessons();
+                    if (pageId === 'teachers') loadTeachers();
+                    if (pageId === 'students') loadStudents();
+                    if (pageId === 'courses') loadCourses();
+                });
+            });
+
+            loadLessons();
+            loadTeachers();
+            loadStudents();
+            loadCourses();
+
+            const addLessonModal = document.getElementById('addLessonModal');
+            const addLessonBtn = document.getElementById('addLessonBtn');
+            const addLessonCloseBtn = addLessonModal.querySelector('.close-btn');
+            const addLessonForm = document.getElementById('addLessonForm');
+
+            addLessonBtn.onclick = () => { addLessonModal.style.display = 'block'; };
+            addLessonCloseBtn.onclick = () => { addLessonModal.style.display = 'none'; };
+            
+            addLessonForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData();
+                formData.append('title', document.getElementById('lessonTitle').value);
+                formData.append('module', document.getElementById('lessonModule').value);
+                formData.append('lessonPdf', document.getElementById('lessonPdf').files[0]);
+                try {
+                    const response = await fetch('http://localhost:3000/api/lessons/upload', { method: 'POST', body: formData });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+                    alert('Dərs uğurla yükləndi!');
+                    addLessonModal.style.display = 'none';
+                    this.reset();
+                    loadLessons();
+                } catch (error) { alert('Xəta: ' + error.message); }
+            });
+
+            const addCourseModal = document.getElementById('addCourseModal');
+            const addCourseBtn = document.getElementById('addCourseBtn');
+            const addCourseCloseBtn = addCourseModal.querySelector('.close-btn');
+            const addCourseForm = document.getElementById('addCourseForm');
+
+            addCourseBtn.onclick = () => { addCourseModal.style.display = 'block'; };
+            addCourseCloseBtn.onclick = () => { addCourseModal.style.display = 'none'; };
+
+            addCourseForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const courseData = {
+                    name: document.getElementById('courseName').value,
+                    description: document.getElementById('courseDescription').value
+                };
+                try {
+                    const response = await fetch('http://localhost:3000/api/courses/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(courseData)
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+                    alert(result.message);
+                    addCourseModal.style.display = 'none';
+                    this.reset();
+                    loadCourses();
+                } catch (error) { alert('Xəta: ' + error.message); }
+            });
+
+            const addUserModal = document.getElementById('addUserModal');
+            const openUserModalBtns = document.querySelectorAll('.open-modal-btn');
+            const addUserForm = document.getElementById('addUserForm');
+            const userModalCloseBtn = addUserModal.querySelector('.close-btn');
+            const modalTitle = document.getElementById('modalTitle');
+            const userRoleInput = document.getElementById('userRole');
+            const studentFields = document.getElementById('studentFields');
+            const teacherSelect = document.getElementById('teacherSelect');
+            const courseSelect = document.getElementById('courseSelect');
+
+            async function populateTeacherSelect() {
+                teacherSelect.innerHTML = '<option value="">Seçim edin...</option>';
+                const teachers = await fetchData('http://localhost:3000/api/users/role/teacher');
+                teachers.forEach(teacher => {
+                    teacherSelect.innerHTML += `<option value="${teacher.id}">${teacher.name}</option>`;
+                });
+            }
+            
+            async function populateCourseSelect() {
+                courseSelect.innerHTML = '<option value="">Seçim edin...</option>';
+                const courses = await fetchData('http://localhost:3000/api/courses');
+                courses.forEach(course => {
+                    courseSelect.innerHTML += `<option value="${course.id}">${course.name}</option>`;
+                });
+            }
+
+            openUserModalBtns.forEach(btn => {
+                btn.onclick = function() {
+                    const role = this.getAttribute('data-role');
+                    addUserForm.reset();
+                    userRoleInput.value = role;
+                    modalTitle.innerText = role === 'teacher' ? 'Yeni Müəllim Əlavə Et' : 'Yeni Şagird Əlavə Et';
+                    
+                    if (role === 'student') {
+                        studentFields.style.display = 'block';
+                        teacherSelect.required = true;
+                        courseSelect.required = true;
+                        populateTeacherSelect();
+                        populateCourseSelect();
+                    } else {
+                        studentFields.style.display = 'none';
+                        teacherSelect.required = false;
+                        courseSelect.required = false;
+                    }
+                     addUserModal.style.display = 'block';
+                }
+            });
+
+            userModalCloseBtn.onclick = () => { addUserModal.style.display = 'none'; };
+
+            window.onclick = (event) => { 
+                if (event.target == addUserModal) addUserModal.style.display = 'none'; 
+                if (event.target == addLessonModal) addLessonModal.style.display = 'none'; 
+                if (event.target == addCourseModal) addCourseModal.style.display = 'none'; 
+            };
+            
+            addUserForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const userData = {
+                    name: document.getElementById('userName').value,
+                    email: document.getElementById('userEmail').value,
+                    password: document.getElementById('userPassword').value,
+                    role: userRoleInput.value,
+                    parent_name: document.getElementById('parentName').value,
+                    parent_contact: document.getElementById('parentContact').value,
+                    teacher_id: document.getElementById('teacherSelect').value,
+                    course_id: document.getElementById('courseSelect').value
+                };
+                try {
+                    const response = await fetch('http://localhost:3000/api/users/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(userData)
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+                    alert(result.message);
+                    addUserModal.style.display = 'none';
+                    if (userData.role === 'teacher') {
+                        loadTeachers();
+                    } else {
+                        loadStudents();
+                    }
+                } catch (error) { alert('Xəta: ' + error.message); }
+            });
+            
+            const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+            let itemToDelete = { id: null, type: null };
+
+            document.querySelector('.main-inner-content').addEventListener('click', function(e) {
+                if (e.target.closest('.delete-btn')) {
+                    const btn = e.target.closest('.delete-btn');
+                    itemToDelete.id = btn.dataset.id;
+                    itemToDelete.type = btn.dataset.type;
+                    confirmDeleteModal.style.display = 'block';
+                }
+            });
+
+            cancelDeleteBtn.onclick = () => { confirmDeleteModal.style.display = 'none'; };
+            confirmDeleteModal.querySelector('.close-btn').onclick = () => { confirmDeleteModal.style.display = 'none'; };
+
+            confirmDeleteBtn.onclick = async () => {
+                let url = '';
+                if (itemToDelete.type === 'user') {
+                    url = `http://localhost:3000/api/users/${itemToDelete.id}`;
+                } else if (itemToDelete.type === 'lesson') {
+                    url = `http://localhost:3000/api/lessons/${itemToDelete.id}`;
+                } else if (itemToDelete.type === 'course') {
+                    url = `http://localhost:3000/api/courses/${itemToDelete.id}`;
+                }
+
+                try {
+                    const response = await fetch(url, { method: 'DELETE' });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+                    
+                    alert(result.message);
+                    confirmDeleteModal.style.display = 'none';
+
+                    if (itemToDelete.type === 'user') {
+                        loadTeachers();
+                        loadStudents();
+                    } else if (itemToDelete.type === 'lesson') {
+                        loadLessons();
+                    } else if (itemToDelete.type === 'course') {
+                        loadCourses();
+                    }
+                } catch (error) {
+                    alert('Xəta: ' + error.message);
+                }
+            };
+        });
+    </script>
+</body>
+</html>

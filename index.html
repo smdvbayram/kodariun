@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kodariun - Robotik Təhsildə İnqilab</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-main: #008072;
+            --primary-dark: #083331;
+            --accent: #00a99d;
+            --text-light: #f0f2f5;
+            --text-dark: #333;
+            --white: #ffffff;
+            --section-bg: #f8f9fa;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: 'Nunito', sans-serif; color: var(--text-dark); background-color: var(--white); line-height: 1.7; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        #main-header { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 15px 0; transition: background-color 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease; }
+        #main-header.scrolled { background-color: rgba(8, 51, 49, 0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 10px 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+        #main-header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--white); font-size: 24px; font-weight: 800; }
+        .logo-svg { height: 40px; width: auto; margin-right: 10px; }
+        #main-nav { display: flex; align-items: center; }
+        #main-nav ul { list-style: none; display: flex; }
+        #main-nav li { margin: 0 20px; }
+        #main-nav a { color: var(--text-light); text-decoration: none; font-weight: 600; position: relative; padding-bottom: 5px; transition: color 0.3s ease; }
+        #main-nav a:hover { color: var(--accent); }
+        #main-nav a::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background-color: var(--accent); transition: width 0.4s ease; }
+        #main-nav a:hover::after { width: 100%; }
+        .btn-login { background-image: linear-gradient(45deg, var(--primary-main), var(--accent)); color: var(--white); padding: 10px 25px; border: none; border-radius: 50px; text-decoration: none; font-weight: 700; box-shadow: 0 4px 15px rgba(0, 121, 107, 0.3); transition: all 0.3s ease; margin-left: 30px; }
+        .btn-login:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 121, 107, 0.5); }
+        .btn-login i { margin-left: 8px; transition: transform 0.3s ease; }
+        .btn-login:hover i { transform: translateX(5px); }
+        .menu-toggle { display: none; flex-direction: column; cursor: pointer; }
+        .menu-toggle .bar { height: 3px; width: 25px; background-color: var(--white); margin: 4px 0; transition: all 0.3s ease; }
+        #hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--white); overflow: hidden; background: var(--primary-dark); }
+        .hero-background-shape { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23008072" fill-opacity="0.1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,138.7C672,128,768,160,864,186.7C960,213,1056,235,1152,218.7C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom center; background-size: cover; }
+        .hero-content { z-index: 2; }
+        .hero-content h1 { font-size: 4.5rem; font-weight: 800; margin-bottom: 20px; line-height: 1.2; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .hero-content p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 30px auto; text-shadow: 0 2px 10px rgba(0,0,0,0.3); opacity: 0.9; }
+        .btn-main { background-image: linear-gradient(45deg, var(--primary-main), var(--accent)); color: var(--white); padding: 15px 40px; border: none; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 1.1rem; box-shadow: 0 4px 20px rgba(0, 169, 157, 0.4); transition: all 0.3s ease; display: inline-block; }
+        .btn-main:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 7px 25px rgba(0, 169, 157, 0.6); }
+        .btn-main .fab { margin-right: 10px; }
+        .content-section { padding: 100px 0; }
+        .bg-light { background-color: var(--section-bg); }
+        .section-title { text-align: center; font-size: 2.8rem; margin-bottom: 60px; font-weight: 800; color: var(--primary-dark); }
+        .about-content { display: flex; align-items: center; gap: 60px; }
+        .about-text { flex: 1; }
+        .about-text h2 { font-size: 2.5rem; color: var(--primary-dark); margin-bottom: 20px; font-weight: 700; }
+        .about-image { flex: 1; }
+        .about-image img { width: 100%; border-radius: 15px; box-shadow: 0 15px 40px rgba(13, 43, 47, 0.15); }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .feature-card { background-color: var(--white); padding: 40px; text-align: center; border-radius: 15px; border: 1px solid #eee; box-shadow: 0 5px 20px rgba(0,0,0,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(13, 43, 47, 0.1); }
+        .feature-card .icon { font-size: 3.5rem; margin-bottom: 25px; background: -webkit-linear-gradient(45deg, var(--primary-main), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: transform 0.3s ease; }
+        .feature-card:hover .icon { transform: scale(1.2) rotate(-10deg); }
+        .feature-card h3 { font-size: 1.5rem; margin-bottom: 15px; font-weight: 700; }
+        .pricing-wrapper { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        .pricing-card { flex: 1; min-width: 300px; max-width: 350px; border: 2px solid #ddd; border-radius: 15px; text-align: center; transition: all 0.3s ease; background-color: var(--white); overflow: hidden; }
+        .pricing-card label { display: block; padding: 25px; cursor: pointer; height: 100%; }
+        .pricing-card input[type="radio"] { display: none; }
+        .pricing-card.popular { border-color: var(--primary-main); transform: scale(1.05); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .popular-badge { background: var(--primary-main); color: white; border-radius: 0 0 15px 15px; padding: 5px 15px; font-weight: bold; margin-bottom: 15px; display: inline-block; font-size: 0.9em; position: absolute; top: 0; left: 50%; transform: translateX(-50%); }
+        .pricing-card h2 { color: var(--primary-main); font-size: 2em; margin-bottom: 10px; }
+        .pricing-card .card-title { font-size: 1.8em; font-weight: 800; color: var(--primary-dark); }
+        .card-subtitle { font-size: 1.1em; margin: 15px 0; min-height: 50px; color: #555; }
+        .price { font-size: 2.5em; font-weight: bold; color: var(--primary-dark); margin: 20px 0; }
+        .price span { font-size: 0.5em; font-weight: normal; color: #777; }
+        .price-description { min-height: 80px; }
+        .divider { margin: 20px 0; border: 0; border-top: 1px solid #eee; }
+        .ideal-for { font-weight: bold; color: var(--primary-dark); }
+        input[type="radio"]:checked + label { border: 2px solid var(--primary-main); border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 128, 114, 0.2); }
+        .contact-form-wrapper { text-align: center; margin-top: 50px; }
+        #contact { text-align: center; background: var(--primary-dark); color: var(--white); padding: 120px 0; }
+        #contact .section-title { color: var(--white); }
+        .contact-subtitle { max-width: 600px; margin: -30px auto 40px auto; font-size: 1.1rem; color: var(--text-light); opacity: 0.8; }
+        footer { background-color: #081c1f; color: #aaa; padding: 25px 0; text-align: center; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        @media (max-width: 992px) {
+            #main-nav { display: none; flex-direction: column; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: rgba(8, 51, 49, 0.98); backdrop-filter: blur(10px); justify-content: center; align-items: center; transform: translateY(-100%); transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1); }
+            #main-nav.active { display: flex; transform: translateY(0); }
+            #main-nav ul { flex-direction: column; text-align: center; }
+            #main-nav li { margin: 20px 0; }
+            #main-nav a { font-size: 1.5rem; }
+            .btn-login { margin-left: 0; margin-top: 30px; }
+            .menu-toggle { display: flex; z-index: 1001; }
+            .menu-toggle.active .bar:nth-child(1) { transform: rotate(-45deg) translate(-5px, 6px); }
+            .menu-toggle.active .bar:nth-child(2) { opacity: 0; }
+            .menu-toggle.active .bar:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
+            .hero-content h1 { font-size: 2.8rem; }
+            .about-content { flex-direction: column; }
+            .section-title { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <a href="#" class="logo-container">
+                <img src="WhatsApp Image 2025-07-29 at 00.33.33_50b8d7d3.jpg" alt="" class="logo-svg" viewBox="0 0 180 120" >
+                <span>KODARIUN</span>
+            </a>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="#hero">Ana Səhifə</a></li>
+                    <li><a href="#about">Haqqımızda</a></li>
+                    <li><a href="#features">Xidmətlərimiz</a></li>
+                    <li><a href="#pricing">Qiymətlər</a></li>
+                    <li><a href="#contact">Əlaqə</a></li>
+                </ul>
+                <a href="login.html" class="btn-login">Portala Giriş <i class="fas fa-arrow-right"></i></a>
+            </nav>
+            <div class="menu-toggle">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+        </div>
+    </header>
+<section id="hero">
+        <div class="hero-background-shape"></div>
+        <div class="hero-content">
+            <h1 class="reveal">Gələcəyin Mühəndislərini <br> Bu Gündən Yetişdirin</h1>
+            <p class="reveal">Tədris mərkəzləri üçün hazırladığımız Lego Robotika proqramları ilə təhsili əyləncəyə çevirin.</p>
+            <a href="#features" class="btn-main reveal">Kəşf Etməyə Başla</a>
+        </div>
+    </section>
+
+    <!-- Haqqımızda Bölməsi -->
+    <section id="about" class="content-section">
+        <div class="container reveal">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Bizim Missiyamız</h2>
+                    <p>"Kodariun" olaraq məqsədimiz, şagirdlərə erkən yaşdan alqoritmik düşüncə, problem həll etmə və komanda işi bacarıqlarını aşılamaqdır. Təhsil mərkəzləri ilə əməkdaşlıq edərək, onlara tədris prosesini asanlaşdıran, müasir və interaktiv bir platforma təqdim edirik.</p>
+                </div>
+                <div class="about-image">
+                    <img src="https://placehold.co/600x400/008072/FFFFFF?text=Komandamız" alt="Robotika dərsi">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Niyə Biz? (Xüsusiyyətlər) Bölməsi -->
+    <section id="features" class="content-section bg-light">
+        <div class="container">
+            <h2 class="section-title reveal">Niyə Məhz Kodariun?</h2>
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <i class="fas fa-sitemap icon"></i>
+                    <h3>Strukturlaşdırılmış Proqram</h3>
+                    <p>Peşəkar pedaqoqlar tərəfindən hazırlanmış, addım-addım irəliləyən dərs planları və layihələr.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <i class="fas fa-desktop icon"></i>
+                    <h3>Vahid İdarəetmə Platforması</h3>
+                    <p>Admin, müəllim, şagird və valideyn üçün bütün prosesləri bir yerdə cəmləyən rahat onlayn portal.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <i class="fas fa-headset icon"></i>
+                    <h3>Daimi Texniki Dəstək</h3>
+                    <p>Platformanın istifadəsi və dərslərin tədrisi ilə bağlı yaranan hər bir sualınıza anında cavab veririk.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="pricing" class="content-section">
+        <div class="container">
+            <h2 class="section-title reveal">Tərəfdaşlıq Modellərimiz</h2>
+            <form id="pricingForm">
+                <div class="pricing-wrapper">
+                    <div class="pricing-card reveal">
+                        <input type="radio" name="pricing-model" id="model1" value="Risksiz Tərəfdaşlıq (40% Gəlir Payı)">
+                        <label for="model1">
+                            <h2>🥇</h2>
+                            <h3 class="card-title">Risksiz Tərəfdaşlıq</h3>
+                            <p class="card-subtitle">Heç bir ilkin ödəniş və ya maliyyə riski olmadan başlayın!</p>
+                            <p class="price">40% <span>Gəlir Payı</span></p>
+                            <p class="price-description">Valideynlərdən toplanan aylıq ödənişin <strong>40%-i</strong> birbaşa kursunuzun gəliri olur.</p>
+                            <hr class="divider">
+                            <p class="ideal-for">Kimlər üçün idealdır?</p>
+                            <p>Proqramımızı risksiz sınaqdan keçirmək istəyən kurslar üçün.</p>
+                        </label>
+                    </div>
+
+                    <div class="pricing-card popular reveal">
+                        <input type="radio" name="pricing-model" id="model2" value="Çevik Model (Hər şagirdə 40 AZN)" checked>
+                        <label for="model2">
+                            <p class="popular-badge">Ən Populyar Seçim</p>
+                            <h2>📈</h2>
+                            <h3 class="card-title">Çevik Model</h3>
+                            <p class="card-subtitle">Öz qiymət siyasətinizi quraraq gəlir marjanızı özünüz təyin edin!</p>
+                            <p class="price">40 AZN <span>/ hər şagirdə</span></p>
+                            <p class="price-description">Hər bir şagird üçün bizə aylıq sadəcə <strong>40 AZN</strong> ödəyin. Valideynə son qiyməti siz təyin edin.</p>
+                            <hr class="divider">
+                            <p class="ideal-for">Kimlər üçün idealdır?</p>
+                            <p>Sabit xərclərlə işləməyə üstünlük verən kurslar üçün.</p>
+                        </label>
+                    </div>
+
+                    <div class="pricing-card reveal">
+                        <input type="radio" name="pricing-model" id="model3" value="Stabil Gəlir Modeli (Aylıq qrup 350 AZN)">
+                        <label for="model3">
+                            <h2>💎</h2>
+                            <h3 class="card-title">Stabil Gəlir Modeli</h3>
+                            <p class="card-subtitle">Qrupu tamamlayaraq kursunuz üçün ən yüksək mənfəəti əldə edin!</p>
+                            <p class="price">350 AZN <span>/ aylıq qrup</span></p>
+                            <p class="price-description">10-12 nəfərlik bir qrup üçün aylıq sabit <strong>350 AZN</strong> ödəniş edin.</p>
+                            <hr class="divider">
+                            <p class="ideal-for">Kimlər üçün idealdır?</p>
+                            <p>Öz gəlirini maksimallaşdırmaq istəyən kurslar üçün.</p>
+                        </label>
+                    </div>
+                </div>
+                <div class="contact-form-wrapper">
+                    <button type="submit" class="btn-main"><i class="fab fa-whatsapp"></i> Seçilmiş Modellə Müraciət Et</button>
+                </div>
+            </form>
+        </div>
+    </section>
+    
+    <section id="contact" class="content-section">
+        <div class="container reveal">
+            <h2 class="section-title">Pulsuz Sınaq Dərsi Qazanın!</h2>
+            <p class="contact-subtitle">Kursunuzda pulsuz sınaq dərsi təşkil etmək və xidmətlərimiz haqqında daha ətraflı məlumat almaq üçün bizimlə əlaqə saxlayın.</p>
+            <a href="https://wa.me/994708452413" target="_blank" class="btn-main"><i class="fab fa-whatsapp"></i> Birbaşa Əlaqə</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Kodariun. Bütün hüquqlar qorunur.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.getElementById('main-header');
+            const menuToggle = document.querySelector('.menu-toggle');
+            const mainNav = document.getElementById('main-nav');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+            menuToggle.addEventListener('click', function() {
+                menuToggle.classList.toggle('active');
+                mainNav.classList.toggle('active');
+            });
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            revealElements.forEach(element => {
+                revealObserver.observe(element);
+            });
+
+            const pricingForm = document.getElementById('pricingForm');
+            pricingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const selectedModelInput = document.querySelector('input[name="pricing-model"]:checked');
+                
+                if (!selectedModelInput) {
+                    alert('Zəhmət olmasa, bir tərəfdaşlıq modeli seçin.');
+                    return;
+                }
+                
+                const selectedModelValue = selectedModelInput.value;
+                const message = `Salam, Kodariun. Mən sizinlə əməkdaşlıq etmək istəyirəm. Maraqlandığım tərəfdaşlıq modeli: "${selectedModelValue}". Bu mövzu haqqında daha ətraflı məlumat almaq istərdim.`;
+                
+                const whatsappNumber = '994708452413';
+                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+                
+                window.open(whatsappUrl, '_blank');
+            });
+        });
+    </script>
+</body>
+</html>

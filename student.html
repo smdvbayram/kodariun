@@ -141,7 +141,7 @@
             async function loadLessons() {
                 const lessonsTableBody = document.getElementById('lessons-table-body');
                 try {
-                    const response = await fetch('http://localhost:3000/api/lessons');
+                    const response = await fetch('http://134.209.85.147:3000/api/lessons');
                     const lessons = await response.json();
                     lessonsTableBody.innerHTML = '';
                     if (lessons.length === 0) {
@@ -149,7 +149,7 @@
                         return;
                     }
                     lessons.forEach(lesson => {
-                        const row = `<tr><td>${lesson.title}</td><td>${lesson.module}</td><td><a href="http://localhost:3000/${lesson.file_path.replace(/\\/g, '/')}" target="_blank" class="primary-button"><i class="fas fa-download icon"></i> Yüklə</a></td></tr>`;
+                        const row = `<tr><td>${lesson.title}</td><td>${lesson.module}</td><td><a href="http://134.209.85.147:3000/${lesson.file_path.replace(/\\/g, '/')}" target="_blank" class="primary-button"><i class="fas fa-download icon"></i> Yüklə</a></td></tr>`;
                         lessonsTableBody.innerHTML += row;
                     });
                 } catch (error) {
@@ -161,7 +161,7 @@
                 if (!currentUser) return;
                 const gradesTableBody = document.getElementById('grades-table-body');
                 try {
-                    const response = await fetch(`http://localhost:3000/api/grades/student/${currentUser.id}`);
+                    const response = await fetch(`http://134.209.85.147:3000/api/grades/student/${currentUser.id}`);
                     const grades = await response.json();
                     gradesTableBody.innerHTML = '';
                     if (grades.length === 0) {
@@ -180,7 +180,7 @@
             async function loadMyProfile() {
                 if (!currentUser) return;
                 try {
-                    const response = await fetch(`http://localhost:3000/api/students/${currentUser.id}/details`);
+                    const response = await fetch(`http://134.209.85.147:3000/api/students/${currentUser.id}/details`);
                     const profile = await response.json();
                     if(response.ok) {
                         document.getElementById('profile-name').textContent = profile.name || 'Məlumat yoxdur';

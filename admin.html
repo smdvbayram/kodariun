@@ -201,7 +201,7 @@
             }
 
             async function loadLessons() {
-                const lessons = await fetchData('http://localhost:3000/api/lessons');
+                const lessons = await fetchData('http://134.209.85.147:3000/api/lessons');
                 const tableBody = document.querySelector('#lessonsTable tbody');
                 tableBody.innerHTML = '';
                 lessons.forEach(lesson => {
@@ -215,7 +215,7 @@
             }
 
             async function loadTeachers() {
-                const teachers = await fetchData('http://localhost:3000/api/users/role/teacher');
+                const teachers = await fetchData('http://134.209.85.147:3000/api/users/role/teacher');
                 const tableBody = document.querySelector('#teachersTable tbody');
                 tableBody.innerHTML = '';
                 teachers.forEach(teacher => {
@@ -229,7 +229,7 @@
             }
 
             async function loadStudents() {
-                const students = await fetchData('http://localhost:3000/api/students/with-details');
+                const students = await fetchData('http://134.209.85.147:3000/api/students/with-details');
                 const tableBody = document.querySelector('#studentsTable tbody');
                 tableBody.innerHTML = '';
                 students.forEach(student => {
@@ -244,7 +244,7 @@
             }
 
             async function loadCourses() {
-                const courses = await fetchData('http://localhost:3000/api/courses');
+                const courses = await fetchData('http://134.209.85.147:3000/api/courses');
                 const tableBody = document.querySelector('#coursesTable tbody');
                 tableBody.innerHTML = '';
                 courses.forEach(course => {
@@ -295,7 +295,7 @@
                 formData.append('module', document.getElementById('lessonModule').value);
                 formData.append('lessonPdf', document.getElementById('lessonPdf').files[0]);
                 try {
-                    const response = await fetch('http://localhost:3000/api/lessons/upload', { method: 'POST', body: formData });
+                    const response = await fetch('http://134.209.85.147:3000/api/lessons/upload', { method: 'POST', body: formData });
                     const result = await response.json();
                     if (!response.ok) throw new Error(result.message);
                     alert('Dərs uğurla yükləndi!');
@@ -320,7 +320,7 @@
                     description: document.getElementById('courseDescription').value
                 };
                 try {
-                    const response = await fetch('http://localhost:3000/api/courses/add', {
+                    const response = await fetch('http://134.209.85.147:3000/api/courses/add', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(courseData)
@@ -346,7 +346,7 @@
 
             async function populateTeacherSelect() {
                 teacherSelect.innerHTML = '<option value="">Seçim edin...</option>';
-                const teachers = await fetchData('http://localhost:3000/api/users/role/teacher');
+                const teachers = await fetchData('http://134.209.85.147:3000/api/users/role/teacher');
                 teachers.forEach(teacher => {
                     teacherSelect.innerHTML += `<option value="${teacher.id}">${teacher.name}</option>`;
                 });
@@ -354,7 +354,7 @@
             
             async function populateCourseSelect() {
                 courseSelect.innerHTML = '<option value="">Seçim edin...</option>';
-                const courses = await fetchData('http://localhost:3000/api/courses');
+                const courses = await fetchData('http://134.209.85.147:3000/api/courses');
                 courses.forEach(course => {
                     courseSelect.innerHTML += `<option value="${course.id}">${course.name}</option>`;
                 });
@@ -403,7 +403,7 @@
                     course_id: document.getElementById('courseSelect').value
                 };
                 try {
-                    const response = await fetch('http://localhost:3000/api/users/add', {
+                    const response = await fetch('http://134.209.85.147:3000/api/users/add', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(userData)
@@ -440,11 +440,11 @@
             confirmDeleteBtn.onclick = async () => {
                 let url = '';
                 if (itemToDelete.type === 'user') {
-                    url = `http://localhost:3000/api/users/${itemToDelete.id}`;
+                    url = `http://134.209.85.147:3000/api/users/${itemToDelete.id}`;
                 } else if (itemToDelete.type === 'lesson') {
-                    url = `http://localhost:3000/api/lessons/${itemToDelete.id}`;
+                    url = `http://134.209.85.147:3000/api/lessons/${itemToDelete.id}`;
                 } else if (itemToDelete.type === 'course') {
-                    url = `http://localhost:3000/api/courses/${itemToDelete.id}`;
+                    url = `http://134.209.85.147:3000/api/courses/${itemToDelete.id}`;
                 }
 
                 try {

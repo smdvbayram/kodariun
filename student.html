@@ -141,7 +141,7 @@
             async function loadLessons() {
                 const lessonsTableBody = document.getElementById('lessons-table-body');
                 try {
-                    const response = await fetch('https://api.kodariun.az/api/lessons');
+                    const response = await fetch( 'https://api.kodariun.az/api/lessons');
                     const lessons = await response.json();
                     lessonsTableBody.innerHTML = '';
                     if (lessons.length === 0) {

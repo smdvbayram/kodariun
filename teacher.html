@@ -158,11 +158,11 @@
             async function loadLessons() {
                 const lessonsTableBody = document.getElementById('lessons-table-body');
                 try {
-                    const response = await fetch('http://134.209.85.147:3000/api/lessons');
+                    const response = await fetch('https://api.kodariun.az/api/lessons');
                     const lessons = await response.json();
                     lessonsTableBody.innerHTML = '';
                     lessons.forEach(lesson => {
-                        const row = `<tr><td>${lesson.title}</td><td>${lesson.module}</td><td><a href="http://134.209.85.147:3000/${lesson.file_path.replace(/\\/g, '/')}" target="_blank" class="primary-button"><i class="fas fa-download icon"></i> Yüklə</a></td></tr>`;
+                        const row = `<tr><td>${lesson.title}</td><td>${lesson.module}</td><td><a href="https://api.kodariun.az/${lesson.file_path.replace(/\\/g, '/')}" target="_blank" class="primary-button"><i class="fas fa-download icon"></i> Yüklə</a></td></tr>`;
                         lessonsTableBody.innerHTML += row;
                     });
                 } catch (error) {
@@ -175,7 +175,7 @@
                 if (!currentUser) return;
                 const studentsTableBody = document.getElementById('students-table-body');
                 try {
-                    const response = await fetch(`http://134.209.85.147:3000/api/teachers/${currentUser.id}/students`);
+                    const response = await fetch(`https://api.kodariun.az/api/teachers/${currentUser.id}/students`);
                     const students = await response.json();
                     studentsTableBody.innerHTML = '';
                     if (students.length === 0) {
@@ -230,7 +230,7 @@
                     graded_by_teacher_id: currentUser.id
                 };
                 try {
-                    const response = await fetch('http://134.209.85.147:3000/api/grades/add', {
+                    const response = await fetch('https://api.kodariun.az/api/grades/add', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(gradeData)
